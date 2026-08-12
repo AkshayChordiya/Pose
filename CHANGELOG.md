@@ -2,6 +2,28 @@
 
 All notable changes to Pose are documented here. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and semantic versioning.
 
+## [Unreleased] - Keep the theme through incremental builds
+
+### Fixed
+
+- **Editing a composable no longer strips the theme from every preview in the module.**
+
+  `getSymbolsWithAnnotation` only returns symbols from KSP's dirty file set. Nothing in
+  your source connects a composable to the module's `@PoseSetup` object - that link only
+  exists in the code Pose emits, as `AppPose.Theme { … }` - so on any incremental round
+  that didn't happen to touch the config file, Pose couldn't see it. It took the
+  no-config path: warned `PG024` and regenerated every preview **unthemed**, and they
+  stayed that way until the next clean build. Same symptom as 0.6.1's missing config
+  object, except nothing was missing.
+
+  Generated files now name the setup object's file as a KSP `Dependencies` source, which
+  keeps it in the dirty set. Previews stay isolating (`aggregating = false`), so
+  incremental builds cost the same as before.
+
+  Only the config object needs this. Parameter types, sealed subtypes and
+  `PreviewParameterProvider` classes are all named somewhere in your own source, so
+  Kotlin already dirties the composable when they change.
+
 ## [0.6.2] - Don't build preview data in production
 
 ### Changed

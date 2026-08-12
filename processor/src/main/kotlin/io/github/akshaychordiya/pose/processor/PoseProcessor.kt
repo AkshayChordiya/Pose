@@ -119,6 +119,7 @@ public class PoseProcessor(
             codeGenerator = codeGenerator,
             options = options,
             inspectionModeAvailable = inspectionModeAvailable,
+            setupFile = setup?.declarationFile,
         )
 
         val plans = mutableListOf<PreviewPlan>()

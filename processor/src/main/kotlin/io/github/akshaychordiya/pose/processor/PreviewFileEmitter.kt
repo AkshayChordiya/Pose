@@ -33,6 +33,11 @@ public class PreviewFileEmitter(
      * an unresolvable reference would break the build.
      */
     private val inspectionModeAvailable: Boolean = true,
+    /**
+     * Source file of the module's `@PoseSetup` object, when it has one. Declared as a
+     * dependency of every generated preview - see [emitForFile].
+     */
+    private val setupFile: KSFile? = null,
 ) {
 
     /**
@@ -67,9 +72,17 @@ public class PreviewFileEmitter(
             plan.providerSlot?.let { fileBuilder.addType(providerType(it)) }
         }
 
+        // The setup object supplies the theme, the wrapper and the scalars below, so it's
+        // an input even though nothing in the user's source connects it to this composable.
+        // KSP scopes `getSymbolsWithAnnotation` to the dirty file set and dirties an
+        // output's declared sources when it invalidates it, so without this an edit to any
+        // composable regenerated its preview in a round where the config object wasn't
+        // visible - dropping the theme wrapper until the next clean build.
+        val sources = listOfNotNull(containingFile, setupFile).distinct()
+
         fileBuilder.build().writeTo(
             codeGenerator = codeGenerator,
-            dependencies = Dependencies(aggregating = false, containingFile),
+            dependencies = Dependencies(aggregating = false, *sources.toTypedArray()),
         )
     }
 

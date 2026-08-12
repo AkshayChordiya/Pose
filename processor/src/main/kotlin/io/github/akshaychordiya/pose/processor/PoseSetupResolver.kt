@@ -5,6 +5,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Visibility
 
@@ -16,6 +17,12 @@ import com.google.devtools.ksp.symbol.Visibility
  */
 internal data class PoseSetup(
     val objectFqn: String,
+    /**
+     * The file the object is declared in. Every generated preview names it as a KSP
+     * `Dependencies` source, which is what keeps it in the dirty set on incremental
+     * rounds - see [PreviewFileEmitter].
+     */
+    val declarationFile: KSFile?,
     /** False when [PoseConfig.Theme] wasn't overridden, i.e. the default passthrough. */
     val overridesTheme: Boolean,
     /** False when [PoseConfig.Wrapper] wasn't overridden. */
@@ -106,6 +113,7 @@ internal object PoseSetupResolver {
 
         return PoseSetup(
             objectFqn = fqn,
+            declarationFile = decl.containingFile,
             overridesTheme = decl.overridesConfigFunction("Theme"),
             overridesWrapper = decl.overridesConfigFunction("Wrapper"),
             args = parseArgs(setupAnn),
