@@ -9,6 +9,7 @@ import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Visibility
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ksp.toClassName
 
 /**
@@ -231,6 +232,37 @@ public class SampleResolver(
                 elems.forEachIndexed { i, cb -> if (i > 0) builder.add(", "); builder.add(cb) }
                 builder.add(")")
                 return SampleExpr.Emit(builder.build(), 2, "list")
+            }
+            "kotlinx.collections.immutable.ImmutableList",
+            "kotlinx.collections.immutable.PersistentList",
+            "kotlinx.collections.immutable.ImmutableCollection" -> {
+                val elem = type.arguments.firstOrNull()?.type?.resolve() ?: return null
+                val inner = (resolveType(elem, ctx.child("[]")) as? SampleExpr.Emit)?.code ?: return null
+                val builder = CodeBlock.builder()
+                    .add("%M(", MemberName("kotlinx.collections.immutable", "persistentListOf"))
+                repeat(options.collectionSize) { i -> if (i > 0) builder.add(", "); builder.add(inner) }
+                builder.add(")")
+                return SampleExpr.Emit(builder.build(), 2, "immutable list")
+            }
+            "kotlinx.collections.immutable.ImmutableSet",
+            "kotlinx.collections.immutable.PersistentSet" -> {
+                val elem = type.arguments.firstOrNull()?.type?.resolve() ?: return null
+                val inner = (resolveType(elem, ctx.child("[]")) as? SampleExpr.Emit)?.code ?: return null
+                return SampleExpr.Emit(
+                    CodeBlock.of("%M(%L)", MemberName("kotlinx.collections.immutable", "persistentSetOf"), inner),
+                    2, "immutable set",
+                )
+            }
+            "kotlinx.collections.immutable.ImmutableMap",
+            "kotlinx.collections.immutable.PersistentMap" -> {
+                val kType = type.arguments.getOrNull(0)?.type?.resolve() ?: return null
+                val vType = type.arguments.getOrNull(1)?.type?.resolve() ?: return null
+                val kInner = (resolveType(kType, ctx.child(".key")) as? SampleExpr.Emit)?.code ?: return null
+                val vInner = (resolveType(vType, ctx.child(".value")) as? SampleExpr.Emit)?.code ?: return null
+                return SampleExpr.Emit(
+                    CodeBlock.of("%M(%L to %L)", MemberName("kotlinx.collections.immutable", "persistentMapOf"), kInner, vInner),
+                    2, "immutable map",
+                )
             }
             "kotlin.collections.Set", "kotlin.collections.MutableSet" -> {
                 val elem = type.arguments.firstOrNull()?.type?.resolve() ?: return null

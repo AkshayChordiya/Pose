@@ -313,7 +313,7 @@ Per parameter, first match wins (top-down):
 |--------------|---------------------------------------------------------------------------------------------------------------------|
 | **Explicit** | `@PoseSample` on the parameter, else a `@Pose(providers = [...])` generic-type match                |
 | **T0**       | Parameter has a default value - omit the argument                                                                   |
-| **T1**       | Well-known FQN (Compose value classes, `Flow`, `StateFlow`, `java.time`, `Uri`, `Result<T>`, …) - inline expression |
+| **T1**       | Well-known FQN (Compose value classes, `Modifier`/`Shape`/`Brush`/`TextStyle`, `Flow`, `StateFlow`, `java.time`/`kotlin.time`, UUIDs, immutable collections, `Uri`, `Result<T>`, …) - inline expression |
 | **T2**       | Structural synthesis (primitives, enums, data classes, sealed, value classes, function types, collections)          |
 | **Refuse**   | No strategy - emits a `PG-xxx` diagnostic and skips                                                                 |
 
@@ -323,7 +323,7 @@ Deterministic - never `Random`, never clock, never classpath-iteration order.
 
 Pose emits actionable `PG-xxx` diagnostics for:
 
-- **Refuse-list parameter types**: `ViewModel`, Hilt, `SavedStateHandle`, `NavController`, `NavBackStackEntry`, `Context`/`Activity`/`Fragment`, `Bitmap`, `Channel`, `CoroutineScope`, `AsyncImagePainter`. Hoist state to a `Content(state, onEvent)` variant.
+- **Refuse-list parameter types**: `ViewModel`, Hilt, `SavedStateHandle`, `NavController`, `NavBackStackEntry`, `Context`/`Activity`/`Fragment`, `Bitmap`, `Channel`, `CoroutineScope`, `AsyncImagePainter` (Coil 2 and Coil 3). Hoist state to a `Content(state, onEvent)` variant.
 - **Generic type parameters** or **context receivers** on the composable.
 - **`private` visibility**, or **member composables** must be top-level or in an `object`.
 
