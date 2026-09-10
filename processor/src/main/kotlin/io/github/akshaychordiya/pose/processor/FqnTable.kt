@@ -56,6 +56,14 @@ public object FqnTable {
         "androidx.compose.ui.graphics.ImageBitmap" to code("%M(64, 64)",
             mn("androidx.compose.ui.graphics", "ImageBitmap")),
 
+        // Compose core types that are interfaces/abstract and would otherwise refuse.
+        "androidx.compose.ui.Modifier" to code("%T", cn("androidx.compose.ui", "Modifier")),
+        "androidx.compose.ui.graphics.Shape" to code("%M",
+            mn("androidx.compose.ui.graphics", "RectangleShape")),
+        "androidx.compose.ui.graphics.Brush" to code("%T(%T(0xFFCCCCCC.toInt()))",
+            cn("androidx.compose.ui.graphics", "SolidColor"),
+            cn("androidx.compose.ui.graphics", "Color")),
+
         // Text
         "androidx.compose.ui.text.AnnotatedString" to code("%T(\"Sample\")",
             cn("androidx.compose.ui.text", "AnnotatedString")),
@@ -63,6 +71,8 @@ public object FqnTable {
             cn("androidx.compose.ui.text.input", "TextFieldValue")),
         "androidx.compose.ui.text.font.FontFamily" to code("%T.Default",
             cn("androidx.compose.ui.text.font", "FontFamily")),
+        "androidx.compose.ui.text.TextStyle" to code("%T.Default",
+            cn("androidx.compose.ui.text", "TextStyle")),
 
         // java.time
         "java.time.LocalDate" to code("%T.of(2024, 1, 15)", cn("java.time", "LocalDate")),
@@ -79,14 +89,30 @@ public object FqnTable {
         ),
         "java.time.YearMonth" to code("%T.of(2024, 1)", cn("java.time", "YearMonth")),
         "java.time.Year" to code("%T.of(2024)", cn("java.time", "Year")),
+        "java.time.OffsetDateTime" to code(
+            "%T.of(2024, 1, 15, 12, 0, 0, 0, %T.UTC)",
+            cn("java.time", "OffsetDateTime"),
+            cn("java.time", "ZoneOffset"),
+        ),
+
+        // java.math
+        "java.math.BigDecimal" to code("%T.ZERO", cn("java.math", "BigDecimal")),
+        "java.math.BigInteger" to code("%T.ZERO", cn("java.math", "BigInteger")),
+
+        // UUIDs
+        "kotlin.uuid.Uuid" to code("%T.NIL", cn("kotlin.uuid", "Uuid")),
+        "java.util.UUID" to code("%T(0L, 0L)", cn("java.util", "UUID")),
 
         // kotlinx.datetime (if present on classpath)
         "kotlinx.datetime.LocalDate" to code("%T(2024, 1, 15)", cn("kotlinx.datetime", "LocalDate")),
         "kotlinx.datetime.LocalDateTime" to code("%T(2024, 1, 15, 12, 0)", cn("kotlinx.datetime", "LocalDateTime")),
         "kotlinx.datetime.Instant" to code("%T.fromEpochSeconds(0)", cn("kotlinx.datetime", "Instant")),
+        "kotlinx.datetime.LocalTime" to code("%T(12, 0)", cn("kotlinx.datetime", "LocalTime")),
+        "kotlinx.datetime.TimeZone" to code("%T.UTC", cn("kotlinx.datetime", "TimeZone")),
 
         // kotlin.time
         "kotlin.time.Duration" to code("%T.ZERO", cn("kotlin.time", "Duration")),
+        "kotlin.time.Instant" to code("%T.fromEpochSeconds(0)", cn("kotlin.time", "Instant")),
 
         // Android
         "android.net.Uri" to code("%T.parse(\"content://com.example/1\")", cn("android.net", "Uri")),
@@ -137,6 +163,8 @@ public object FqnTable {
         "kotlinx.coroutines.CoroutineScope" to "CoroutineScope",
         "coil.compose.AsyncImagePainter" to "AsyncImagePainter",
         "coil.compose.SubcomposeAsyncImagePainter" to "AsyncImagePainter",
+        "coil3.compose.AsyncImagePainter" to "AsyncImagePainter",
+        "coil3.compose.SubcomposeAsyncImagePainter" to "AsyncImagePainter",
     )
 
     /**

@@ -45,7 +45,7 @@ Two types refer to each other (or a type refers to itself) and structural synth 
 
 ## PG003 — parameter type is in the refuse category
 
-The parameter's type is on the refuse list — types that inject runtime state (`ViewModel`, Hilt, `SavedStateHandle`, `NavController`, `NavBackStackEntry`, `Context`/`Activity`/`Fragment`, `Bitmap`, `Channel`, `CoroutineScope`, `AsyncImagePainter`). These can't be faked at preview time without materially changing the composable's behavior.
+The parameter's type is on the refuse list — types that inject runtime state (`ViewModel`, Hilt, `SavedStateHandle`, `NavController`, `NavBackStackEntry`, `Context`/`Activity`/`Fragment`, `Bitmap`, `Channel`, `CoroutineScope`, `AsyncImagePainter` — Coil 2 and Coil 3). These can't be faked at preview time without materially changing the composable's behavior.
 
 **Fix — the "Content" split pattern:**
 

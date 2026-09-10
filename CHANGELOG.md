@@ -2,6 +2,27 @@
 
 All notable changes to Pose are documented here. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and semantic versioning.
 
+## [Unreleased]
+
+### Added
+
+- **More well-known types in the T1 FQN table.**
+  - Modern time & IDs: `kotlin.time.Instant` (the successor to `kotlinx.datetime.Instant`
+    as of kotlinx-datetime 0.7), `kotlin.uuid.Uuid`, `java.util.UUID`,
+    `kotlinx.datetime.LocalTime`, `kotlinx.datetime.TimeZone`, `java.time.OffsetDateTime`,
+    `java.math.BigDecimal`, `java.math.BigInteger`.
+  - Compose core types that previously refused as interface/abstract: `Modifier`
+    (companion), `Shape` (`RectangleShape`), `Brush` (`SolidColor` of the neutral grey),
+    `TextStyle` (`TextStyle.Default`).
+  - `kotlinx.collections.immutable` synthesis: `ImmutableList`/`PersistentList`,
+    `ImmutableSet`/`PersistentSet`, `ImmutableMap`/`PersistentMap` emit
+    `persistentListOf(...)` / `persistentSetOf(...)` / `persistentMapOf(...)`,
+    with lists respecting `collectionSize`.
+- **Coil 3 refuse entries.** `coil3.compose.AsyncImagePainter` and
+  `coil3.compose.SubcomposeAsyncImagePainter` now refuse with `PG003` like their
+  Coil 2 counterparts, instead of failing structural synthesis with a less
+  helpful `PG001`.
+
 ## [0.6.3] - Keep the theme through incremental builds
 
 ### Fixed
