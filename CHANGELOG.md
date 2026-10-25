@@ -4,15 +4,18 @@ All notable changes to Pose are documented here. Follows [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.6.5] - Bazel support & expanded FQN table
+
 ### Added
 
+- **Bazel & custom layout support in IntelliJ plugin:** Gutter icons now resolve generated previews from `bazel-bin/` (and `bazel-out/`) layouts, as well as falling back to IDE-indexed source roots, in addition to standard Gradle `build/generated/ksp/` layouts.
 - **More well-known types in the T1 FQN table.**
   - Modern time & IDs: `kotlin.time.Instant` (the successor to `kotlinx.datetime.Instant`
     as of kotlinx-datetime 0.7), `kotlin.uuid.Uuid`, `java.util.UUID`,
     `kotlinx.datetime.LocalTime`, `kotlinx.datetime.TimeZone`, `java.time.OffsetDateTime`,
     `java.math.BigDecimal`, `java.math.BigInteger`.
   - Compose core types that previously refused as interface/abstract: `Modifier`
-    (companion), `Shape` (`RectangleShape`), `Brush` (`SolidColor` of the neutral grey),
+    (companion), `Shape` (`RectangleShape`), `Brush` (`SolidColor` of the neutral gray),
     `TextStyle` (`TextStyle.Default`).
   - `kotlinx.collections.immutable` synthesis: `ImmutableList`/`PersistentList`,
     `ImmutableSet`/`PersistentSet`, `ImmutableMap`/`PersistentMap` emit
@@ -22,6 +25,7 @@ All notable changes to Pose are documented here. Follows [Keep a Changelog](http
   `coil3.compose.SubcomposeAsyncImagePainter` now refuse with `PG003` like their
   Coil 2 counterparts, instead of failing structural synthesis with a less
   helpful `PG001`.
+- Bump overall dependencies
 
 ## [0.6.3] - Keep the theme through incremental builds
 
@@ -296,6 +300,8 @@ First release published to Maven Central under `io.github.akshaychordiya.pose`. 
 - Sealed fan-out (one preview per subtype), `companion.previewSamples` support, theme wrapping via `pose.themeFqName`.
 - Sample app with LoginContent + HomeContent.
 
+[0.6.5]: https://github.com/AkshayChordiya/Pose/releases/tag/v0.6.5
+[0.6.3]: https://github.com/AkshayChordiya/Pose/releases/tag/v0.6.3
 [0.6.2]: https://github.com/AkshayChordiya/Pose/releases/tag/v0.6.2
 [0.6.1]: https://github.com/AkshayChordiya/Pose/releases/tag/v0.6.1
 [0.6.0]: https://github.com/AkshayChordiya/Pose/releases/tag/v0.6.0

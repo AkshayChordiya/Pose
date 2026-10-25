@@ -9,11 +9,12 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.maven.publish) apply false
     alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.intellij.platform) apply false
 }
 
 allprojects {
     group = "io.github.akshaychordiya.pose"
-    version = "0.6.3"
+    version = "0.6.5"
 
     plugins.withId("com.vanniktech.maven.publish") {
         extensions.configure<MavenPublishBaseExtension> {
