@@ -82,6 +82,14 @@ intellijPlatform {
         // returning users see what's new since the version they installed.
         changeNotes.set(
             """
+            <h3>0.6.5</h3>
+            <ul>
+              <li><b>Bazel and custom project layout support:</b> Gutter icons now resolve
+                  previews in Bazel projects (under <code>bazel-bin/</code> or
+                  <code>bazel-out/</code>) and fall back to IDE-indexed files.</li>
+              <li>Compatible with Pose 0.6.5 KSP processor and expanded standard type synthesis.</li>
+            </ul>
+
             <h3>0.5.0</h3>
             <ul>
               <li>KSP side: generated previews now provide

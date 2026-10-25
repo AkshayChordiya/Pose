@@ -48,17 +48,43 @@ Compose's preview ecosystem is great at **consuming** previews (Showkase, Papara
 
 ## Install 🔧
 
+### Gradle
+
 ```kotlin
 plugins { id("com.google.devtools.ksp") }
 
 dependencies {
-    implementation("io.github.akshaychordiya.pose:annotations:0.6.3")
-    kspDebug("io.github.akshaychordiya.pose:processor:0.6.3")
+    implementation("io.github.akshaychordiya.pose:annotations:0.6.5")
+    kspDebug("io.github.akshaychordiya.pose:processor:0.6.5")
 
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
+```
 
+### Bazel
+
+Using `rules_kotlin`:
+
+```python
+load("@rules_kotlin//kotlin:core.bzl", "kt_ksp_plugin")
+load("@rules_kotlin//kotlin:android.bzl", "kt_android_library")
+
+kt_ksp_plugin(
+    name = "pose_processor",
+    processor_class = "io.github.akshaychordiya.pose.processor.PoseProcessorProvider",
+    deps = ["@maven//:io_github_akshaychordiya_pose_processor"],
+)
+
+kt_android_library(
+    name = "my_target",
+    srcs = glob(["src/main/kotlin/**/*.kt"]),
+    plugins = [":pose_processor"],
+    deps = [
+        "@maven//:io_github_akshaychordiya_pose_annotations",
+        "@maven//:androidx_compose_ui_ui_tooling_preview",
+    ],
+)
 ```
 
 Then declare one config object per module - this is where your theme goes:
@@ -381,6 +407,7 @@ Anything else starting with `pose.` warns via `PG023` with a "did you mean" sugg
 
 - **Android** - first-class, tested end-to-end via the sample-app.
 - **Kotlin Multiplatform / Compose Multiplatform** - verified working on real CMP + KMP projects. `androidx.compose.ui.tooling.preview.Preview` unified across Android and CMP, so Pose's emission works on both. Wire the processor into the appropriate `ksp<Target>Main` configuration in your module's `build.gradle.kts`.
+- **Bazel** - supported via `rules_kotlin` (`kt_ksp_plugin`). The IntelliJ plugin resolves generated previews from `bazel-bin/` and IDE-indexed source roots.
 
 ## Limitations 🚧
 

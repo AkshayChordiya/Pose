@@ -148,6 +148,156 @@ class PoseLineMarkerProviderTest : BasePlatformTestCase() {
         )
     }
 
+    fun testGutterPresentForBazelLayout() {
+        // Bazel workspace with WORKSPACE file and BUILD.bazel package root,
+        // and generated files in bazel-bin/<package>/...
+        myFixture.tempDirFixture.createFile("WORKSPACE", "")
+        myFixture.tempDirFixture.createFile("feature/login/BUILD.bazel", "")
+        myFixture.tempDirFixture.createFile(
+            "bazel-bin/feature/login/ksp/kotlin/com/example/LoginContent__Preview.kt",
+            """
+            package com.example
+
+            internal fun LoginContent__Preview() { }
+            """.trimIndent(),
+        )
+        val src = myFixture.tempDirFixture.createFile(
+            "feature/login/src/main/kotlin/com/example/LoginContent.kt",
+            """
+            package com.example
+
+            fun LoginContent() { }
+            """.trimIndent(),
+        )
+        myFixture.configureFromExistingVirtualFile(src)
+        myFixture.doHighlighting()
+
+        val tooltips = posetTooltips()
+        assertEquals("Expected exactly one Pose gutter icon for Bazel layout", 1, tooltips.size)
+        assertTrue(
+            "Tooltip should reference LoginContent__Preview; got: ${tooltips.single()}",
+            tooltips.single().contains("LoginContent__Preview"),
+        )
+    }
+
+    fun testGutterPresentForBazelModuleLayoutWithoutKotlinPrefix() {
+        // Bazel workspace with MODULE.bazel where KSP output doesn't have a 'kotlin/' prefix
+        myFixture.tempDirFixture.createFile("MODULE.bazel", "")
+        myFixture.tempDirFixture.createFile("app/BUILD", "")
+        myFixture.tempDirFixture.createFile(
+            "bazel-bin/app/ksp/com/example/AppHeader__Preview.kt",
+            """
+            package com.example
+
+            internal fun AppHeader__Preview() { }
+            """.trimIndent(),
+        )
+        val src = myFixture.tempDirFixture.createFile(
+            "app/src/com/example/AppHeader.kt",
+            """
+            package com.example
+
+            fun AppHeader() { }
+            """.trimIndent(),
+        )
+        myFixture.configureFromExistingVirtualFile(src)
+        myFixture.doHighlighting()
+
+        val tooltips = posetTooltips()
+        assertEquals("Expected exactly one Pose gutter icon for Bazel module layout", 1, tooltips.size)
+        assertTrue(
+            "Tooltip should reference AppHeader__Preview; got: ${tooltips.single()}",
+            tooltips.single().contains("AppHeader__Preview"),
+        )
+    }
+
+    fun testGutterPresentForBazelOutLayout() {
+        // Bazel workspace using bazel-out/<arch>/bin/<package>/...
+        myFixture.tempDirFixture.createFile("MODULE.bazel", "")
+        myFixture.tempDirFixture.createFile("ui/profile/BUILD.bazel", "")
+        myFixture.tempDirFixture.createFile(
+            "bazel-out/darwin_arm64-fastbuild/bin/ui/profile/ksp/kotlin/com/example/ProfileCard__Preview.kt",
+            """
+            package com.example
+
+            internal fun ProfileCard__Preview() { }
+            """.trimIndent(),
+        )
+        val src = myFixture.tempDirFixture.createFile(
+            "ui/profile/src/main/kotlin/com/example/ProfileCard.kt",
+            """
+            package com.example
+
+            fun ProfileCard() { }
+            """.trimIndent(),
+        )
+        myFixture.configureFromExistingVirtualFile(src)
+        myFixture.doHighlighting()
+
+        val tooltips = posetTooltips()
+        assertEquals("Expected exactly one Pose gutter icon for bazel-out layout", 1, tooltips.size)
+        assertTrue(
+            "Tooltip should reference ProfileCard__Preview; got: ${tooltips.single()}",
+            tooltips.single().contains("ProfileCard__Preview"),
+        )
+    }
+
+    fun testGutterPresentForIndexedFileFallback() {
+        // Generated file located anywhere in project that is indexed by IDE
+        myFixture.tempDirFixture.createFile(
+            "custom-gen/com/example/CustomScreen__Preview.kt",
+            """
+            package com.example
+
+            internal fun CustomScreen__Preview() { }
+            """.trimIndent(),
+        )
+        val src = myFixture.tempDirFixture.createFile(
+            "src/com/example/CustomScreen.kt",
+            """
+            package com.example
+
+            fun CustomScreen() { }
+            """.trimIndent(),
+        )
+        myFixture.configureFromExistingVirtualFile(src)
+        myFixture.doHighlighting()
+
+        val tooltips = posetTooltips()
+        assertEquals("Expected exactly one Pose gutter icon via indexed fallback", 1, tooltips.size)
+        assertTrue(
+            "Tooltip should reference CustomScreen__Preview; got: ${tooltips.single()}",
+            tooltips.single().contains("CustomScreen__Preview"),
+        )
+    }
+
+    fun testNoGutterWhenIndexedFallbackPackageMismatches() {
+        // Generated file has same filename `__Preview.kt`, but belongs to a different package
+        myFixture.tempDirFixture.createFile(
+            "custom-gen/com/other/DifferentPkgScreen__Preview.kt",
+            """
+            package com.other
+
+            internal fun DifferentPkgScreen__Preview() { }
+            """.trimIndent(),
+        )
+        val src = myFixture.tempDirFixture.createFile(
+            "src/com/example/DifferentPkgScreen.kt",
+            """
+            package com.example
+
+            fun DifferentPkgScreen() { }
+            """.trimIndent(),
+        )
+        myFixture.configureFromExistingVirtualFile(src)
+        myFixture.doHighlighting()
+
+        assertTrue(
+            "No Pose gutter expected when indexed file is in a different package",
+            posetTooltips().isEmpty(),
+        )
+    }
+
     /** Filters gutter markers to only Pose's — keyed on tooltip content. */
     private fun posetTooltips(): List<String> =
         myFixture.findAllGutters()
